@@ -23,45 +23,46 @@ def resize_photo():
     os.chdir(user_input)
     current_directory = os.getcwd()
     pictures = os.listdir(current_directory)
-    print("Resizing...")
+    jpg_jpeg_files = [picture for picture in pictures if os.path.splitext(picture)[1].lower() in [".jpeg", ".jpg"]]
+    if jpg_jpeg_files:
+        print("Resizing...")
+    else:
+        print("No files found to be processed.")
     for picture in pictures:
         picture_path = os.path.join(current_directory, picture)
         if os.path.isfile(picture_path):
-            extension = os.path.splitext(picture_path)[1].lower()
-            if extension in [".jpeg", ".jpg"]:
-                global size
-                im = Image.open(picture)
-                resized = im.resize(size)
-                resized.save(f"{current_directory}/resized/{picture}")
-                file_name = os.path.basename(im.filename)
-                print(f"{file_name} has been processed.")
-                im.close()
+            global size
+            im = Image.open(picture)
+            resized_picture = im.resize(size)
+            resized_picture.save(f"{current_directory}/resized/{picture}")
+            file_name = os.path.basename(im.filename)
+            print(f"{file_name} has been processed.")
+            im.close()
 
 
 def input_logic():
-    try:
-        if user_input == "help":
-            print("To get the current working directory:\n"
-                  "1. Open Windows Explorer\n"
-                  "2. Navigate to the folder with the current work order's photos\n"
-                  "3. Click the address bar to highlight the path\n"
-                  "4. Copy the path and paste it into this program\n"
-                  "Note: This program will only resize .jpg/.jpeg files.\n")
-        elif user_input == "exit":
-            exit("User exited the program.")
-        elif not user_input.strip():
-            print("Empty entry. Please enter a valid directory path.\n")
-        else:
-            make_folder()
-            resize_photo()
-            exit_program()
-    except FileNotFoundError:
-        print("Invalid directory. Please enter a valid directory path.\n")
+    if user_input == "help":
+        print("To get the current working directory:\n"
+              "1. Open Windows Explorer\n"
+              "2. Navigate to the folder with the current work order's photos\n"
+              "3. Click the address bar to highlight the path\n"
+              "4. Copy the path and paste it into this program\n"
+              "Note: This program will only resize .jpg/.jpeg files.\n")
+    elif user_input == "exit":
+        exit("User exited the program.")
+    elif not user_input.strip():
+        print("Empty entry. Please enter a valid directory path.\n")
+    elif not os.path.isdir(user_input):
+        print("Invalid directory entry. Please enter a valid directory path.\n")
+    else:
+        make_folder()
+        resize_photo()
+        exit_program()
 
 
 def exit_program():
     input("\n"
-          "Press [Enter] to exit program.")
+          "Press [Enter] to exit the program.")
     exit("User exited the program.")
 
 
