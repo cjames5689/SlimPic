@@ -20,10 +20,12 @@ def make_folder():
 
 
 def resize_photo():
+    success_count = 0
     os.chdir(user_input)
     current_directory = os.getcwd()
     pictures = os.listdir(current_directory)
     jpg_jpeg_files = [picture for picture in pictures if os.path.splitext(picture)[1].lower() in [".jpeg", ".jpg"]]
+    total_files = jpg_jpeg_files.__len__()
     if jpg_jpeg_files:
         print("Resizing...")
     else:
@@ -36,8 +38,11 @@ def resize_photo():
             resized_picture = im.resize(size)
             resized_picture.save(f"{current_directory}/resized/{picture}")
             file_name = os.path.basename(im.filename)
+            success_count += 1
             print(f"{file_name} has been processed.")
             im.close()
+    print(f"\n"
+          f"{success_count} of {total_files} files processed.")
 
 
 def input_logic():
