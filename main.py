@@ -22,21 +22,26 @@ def resize_photo(path):
     success_count = 0
     os.chdir(path)
     pictures = os.listdir(path)
+    resized_contents = os.listdir(os.path.join(user_input, "resized"))
     jpg_jpeg_files = [picture for picture in pictures if os.path.splitext(picture)[1].lower() in [".jpeg", ".jpg"]]
     total_files = len(jpg_jpeg_files)
     if jpg_jpeg_files:
         print("Resizing...")
         for picture in jpg_jpeg_files:
-            global size
-            im = Image.open(picture)
-            resized_picture = im.resize(size)
-            resized_picture.save(f"{path}/resized/{picture}")
-            file_name = os.path.basename(im.filename)
-            success_count += 1
-            print(f"{file_name} has been processed.")
-            im.close()
+            if picture not in resized_contents:
+                global size
+                im = Image.open(picture)
+                im.thumbnail(size)
+                im.save(f"{path}/resized/{picture}")
+                file_name = os.path.basename(im.filename)
+                success_count += 1
+                print(f"{file_name} has been processed.")
+                im.close()
+            else:
+                print("File already processed.")
         print(f"\n"
               f"{success_count} of {total_files} files processed.\n")
+
     else:
         print("No files found to be processed.\n")
 
