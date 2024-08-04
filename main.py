@@ -5,18 +5,25 @@ from PIL import Image
 size = (1600, 1200)
 
 
+def main():
+    while True:
+        user_input = (input("(Type 'help' for instructions or 'exit' to exit the program.)\n"
+                            "Please enter the current working directory: ")).lower()
+        input_logic(user_input)
+
+
 def make_folder(path):
     try:
-        os.mkdir(path + "/resized/")
+        resized_path = os.path.join(path, "resized")
+        os.makedirs(resized_path, exist_ok=True)
         print(f"\n"
-              f"{os.path.join(path, "resized")} has been created.\n")
-    except FileExistsError:
-        print("\n"
-              "The 'resized' directory already exists!\n")
-    except OSError:
-        print("Invalid directory path syntax. Please enter a valid directory path.")
+              f"{resized_path} has been created.\n")
+    except WindowsError as w:
+        print(f"\nAccess denied. Contact administrator for directory access.\n{w}\n")
+        main()
     except Exception as e:
-        print(f"The program exited with exit code {e}")
+        print(f"There was an error when creating the 'resized' folder.\nError code: {e}")
+        main()
 
 
 def resize_photo(path):
@@ -37,7 +44,7 @@ def resize_photo(path):
                 if picture not in os.listdir(resized_dir):
                     with Image.open(picture_path) as im:
                         im.thumbnail(size)
-                        im.save(f"{os.path.join(path, "resized", picture)}")
+                        im.save(os.path.join(path, "resized", picture))
                         success_count += 1
                         print(f"{os.path.basename(resized_picture_path)} has been processed.")
                 else:
@@ -47,7 +54,7 @@ def resize_photo(path):
         print(f"\n"
               f"{success_count} of {total_files} files processed.\n")
     else:
-        print("No files found to be processed.\n")
+        print("\nNo files found to be processed.\n")
 
 
 def input_logic(command):
@@ -72,7 +79,4 @@ def input_logic(command):
 
 if __name__ == "__main__":
     print("P H O T O    R E S I Z E R\n")
-    while True:
-        user_input = (input("(Type 'help' for instructions or 'exit' to exit the program.)\n"
-                            "Please enter the current working directory: ")).lower()
-        input_logic(user_input)
+    main()
