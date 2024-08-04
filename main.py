@@ -25,22 +25,23 @@ def resize_photo():
     current_directory = os.getcwd()
     pictures = os.listdir(current_directory)
     jpg_jpeg_files = [picture for picture in pictures if os.path.splitext(picture)[1].lower() in [".jpeg", ".jpg"]]
-    total_files = jpg_jpeg_files.__len__()
+    total_files = len(jpg_jpeg_files)
     if jpg_jpeg_files:
         print("Resizing...")
+        for picture in jpg_jpeg_files:
+            picture_path = os.path.join(current_directory, picture)
+            if os.path.isfile(picture_path) and os.path.splitext(picture)[1].lower() in [".jpeg", ".jpg"]:
+                global size
+                im = Image.open(picture_path)
+                resized_picture = im.resize(size)
+                resized_picture.save(f"{current_directory}/resized/{picture}")
+                file_name = os.path.basename(im.filename)
+                success_count += 1
+                print(f"{file_name} has been processed.")
+                im.close()
     else:
         print("No files found to be processed.")
-    for picture in pictures:
-        picture_path = os.path.join(current_directory, picture)
-        if os.path.isfile(picture_path):
-            global size
-            im = Image.open(picture)
-            resized_picture = im.resize(size)
-            resized_picture.save(f"{current_directory}/resized/{picture}")
-            file_name = os.path.basename(im.filename)
-            success_count += 1
-            print(f"{file_name} has been processed.")
-            im.close()
+
     print(f"\n"
           f"{success_count} of {total_files} files processed.\n")
 
