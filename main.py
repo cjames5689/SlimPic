@@ -1,4 +1,5 @@
 import os
+import PIL
 from PIL import Image
 
 size = (1600, 1200)
@@ -28,20 +29,22 @@ def resize_photo(path):
     if jpg_jpeg_files:
         print("Resizing...")
         for picture in jpg_jpeg_files:
-            if picture not in resized_contents:
-                global size
-                im = Image.open(picture)
-                im.thumbnail(size)
-                im.save(f"{path}/resized/{picture}")
-                file_name = os.path.basename(im.filename)
-                success_count += 1
-                print(f"{file_name} has been processed.")
-                im.close()
-            else:
-                print("File already processed.")
+            try:
+                if picture not in resized_contents:
+                    global size
+                    im = Image.open(picture)
+                    im.thumbnail(size)
+                    im.save(f"{path}/resized/{picture}")
+                    file_name = os.path.basename(im.filename)
+                    success_count += 1
+                    print(f"{file_name} has been processed.")
+                    im.close()
+                else:
+                    print("File already processed.")
+            except PIL.UnidentifiedImageError as e:
+                print(f"\nUnknown file type. {picture} was not processed.\n{e}\n")
         print(f"\n"
               f"{success_count} of {total_files} files processed.\n")
-
     else:
         print("No files found to be processed.\n")
 
