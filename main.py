@@ -42,7 +42,7 @@ def resize_photo():
             print(f"{file_name} has been processed.")
             im.close()
     print(f"\n"
-          f"{success_count} of {total_files} files processed.")
+          f"{success_count} of {total_files} files processed.\n")
 
 
 def input_logic():
@@ -62,13 +62,6 @@ def input_logic():
     else:
         make_folder()
         resize_photo()
-        exit_program()
-
-
-def exit_program():
-    input("\n"
-          "Press [Enter] to exit the program.")
-    exit("User exited the program.")
 
 
 if __name__ == "__main__":
