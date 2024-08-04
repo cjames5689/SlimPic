@@ -22,23 +22,24 @@ def make_folder(path):
 def resize_photo(path):
     success_count = 0
     os.chdir(path)
-    pictures = os.listdir(path)
-    resized_contents = os.listdir(os.path.join(user_input, "resized"))
-    jpg_jpeg_files = [picture for picture in pictures if os.path.splitext(picture)[1].lower() in [".jpeg", ".jpg"]]
+    jpg_jpeg_files = [
+        picture for picture in os.listdir(path)
+        if os.path.splitext(picture)[1].lower() in [".jpeg", ".jpg"]
+    ]
     total_files = len(jpg_jpeg_files)
     if jpg_jpeg_files:
         print("Resizing...")
+        resized_dir = os.path.join(path, "resized")
         for picture in jpg_jpeg_files:
+            picture_path = os.path.join(path, picture)
+            resized_picture_path = os.path.join(resized_dir, picture)
             try:
-                if picture not in resized_contents:
-                    global size
-                    im = Image.open(picture)
-                    im.thumbnail(size)
-                    im.save(f"{path}/resized/{picture}")
-                    file_name = os.path.basename(im.filename)
-                    success_count += 1
-                    print(f"{file_name} has been processed.")
-                    im.close()
+                if picture not in os.listdir(resized_dir):
+                    with Image.open(picture_path) as im:
+                        im.thumbnail(size)
+                        im.save(f"{os.path.join(path, "resized", picture)}")
+                        success_count += 1
+                        print(f"{os.path.basename(resized_picture_path)} has been processed.")
                 else:
                     print("File already processed.")
             except PIL.UnidentifiedImageError as e:
@@ -51,8 +52,7 @@ def resize_photo(path):
 
 def input_logic(command):
     if command == "help":
-        print("\n"
-              "To get the current working directory:\n"
+        print("\nTo get the current working directory:\n"
               "1. Open Windows Explorer\n"
               "2. Navigate to the folder with the current work order's photos\n"
               "3. Click the address bar to highlight the path\n"
