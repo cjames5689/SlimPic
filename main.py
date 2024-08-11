@@ -1,14 +1,40 @@
 import os
 import PIL.Image
+
 size = (1600, 1200)
 
 
 def main():
     while True:
-        user_input = (input("(Type 'help' for instructions or 'exit' to exit the program.)\n"
-                            "Please enter the current working directory: ")).lower().strip()
+        user_input = (input("""(Type 'help' for instructions or 'exit' to exit the program.)
+Please enter the current working directory: """)).lower().strip()
         user_input = os.path.normpath(user_input)
         input_logic(user_input)
+
+
+def input_logic(command):
+    if not command or command == ".":
+        print("Empty directory entry. Please enter a valid directory path.\n")
+    elif command == "help":
+        display_help()
+    elif command == "exit":
+        exit("User exited the program.")
+    elif os.path.isdir(command):
+        if make_folder(command):
+            resize_photo(command)
+    else:
+        print(f"The directory '{command}' was not found. Please enter a valid directory path.\n")
+
+
+def display_help():
+    print("""\nTo get the current working directory:
+
+1. Open Windows Explorer
+2. Navigate to the folder with the current work order's photos
+3. Click the address bar to highlight the path
+4. Copy the path and paste it into this program
+
+Note: This program will only resize .jpg and .jpeg files.\n""")
 
 
 def make_folder(path):
@@ -53,29 +79,6 @@ def resize_photo(path):
         print(f"\n{success_count} of {total_files} files processed.\n")
     else:
         print("\nNo files found to be processed.\n")
-
-
-def display_help():
-    print("\nTo get the current working directory:\n"
-          "1. Open Windows Explorer\n"
-          "2. Navigate to the folder with the current work order's photos\n"
-          "3. Click the address bar to highlight the path\n"
-          "4. Copy the path and paste it into this program\n"
-          "\nNote: This program will only resize .jpg/.jpeg files.\n")
-
-
-def input_logic(command):
-    if command == "help":
-        display_help()
-    elif command == "exit":
-        exit("User exited the program.")
-    elif not command.strip():
-        print("Empty entry. Please enter a valid directory path.\n")
-    elif not os.path.isdir(command):
-        print("Invalid directory entry. Please enter a valid directory path.\n")
-    else:
-        if make_folder(command):
-            resize_photo(command)
 
 
 if __name__ == "__main__":
