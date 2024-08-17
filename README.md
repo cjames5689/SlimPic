@@ -1,15 +1,20 @@
-	 _____  _    _  ____ _______ ____   	 _____  ______  _____ _____ ____________ _____  
-	|  __ \| |  | |/ __ \__   __/ __ \  	|  __ \|  ____|/ ____|_   _|___  /  ____|  __ \ 
-	| |__) | |__| | |  | | | | | |  | | 	| |__) | |__  | (___   | |    / /| |__  | |__) |
-	|  ___/|  __  | |  | | | | | |  | | 	|  _  /|  __|  \___ \  | |   / / |  __| |  _  / 
-	| |    | |  | | |__| | | | | |__| | 	| | \ \| |____ ____) |_| |_ / /__| |____| | \ \ 
-	|_|    |_|  |_|\____/  |_|  \____/  	|_|  \_\______|_____/|_____/_____|______|_|  \_\
+	
+	 ____  _ _           ____  _      
+	/ ___|| (_)_ __ ___ |  _ \(_) ___ 
+	\___ \| | | '_ ` _ \| |_) | |/ __|
+	 ___) | | | | | | | |  __/| | (__ 
+	|____/|_|_|_| |_| |_|_|   |_|\___|
+                                   
+
 
 -----------------------------------------------------------------------------------------------------------------------------
 
 OVERVIEW:
 
-The Photo Resizer is a simple program designed to resize all .jpg images in a specified directory to a max resolution of 1600x1200 pixels. The resized images are saved in a subdirectory named 'resized'. If the photo's original resolution is lower than the 1600x1200 bounding box, the script using thumbnail() will leave the image unchanged. It will not upscale the image, so the original resolution is preserved without any resizing.
+*SlimPic is a tool designed to reduce the file size of your .jpeg images by fitting them within a maximum 
+bounding box of 1600x1200 pixels. The program preserves the original aspect ratio of your photos, ensuring they are 
+resized based on their orientation—whether portrait or landscape. If the photos to be processed are already within
+the bounding box resolution, they will be saved in the resized folder, but remain the original size.
 -----------------------------------------------------------------------------------------------------------------------------
 
 USAGE:
@@ -38,18 +43,14 @@ NOTES:
 
 *This program only processes .jpg and .jpeg files.
 
-*The script resizes images to fit within a maximum size of 1600x1200 pixels while preserving the original aspect ratio. This ensures that the images are scaled down proportionally without distortion, fitting within the bounding box while maintaining their natural dimensions.
+*The script resizes images to fit within a maximum size of 1600x1200 pixels while preserving the original aspect ratio. This ensures that the images are scaled down proportionally 
+without distortion independent of orientation, fitting within the bounding box while maintaining their natural dimensions.
 
 *If the resized subdirectory already exists, the program will use it without creating a new one.
 -----------------------------------------------------------------------------------------------------------------------------
 
 EXIT:
 
-To exit the program at any time, type exit when prompted for a directory path.
+To exit the program at any time, type exit when prompted.
 -----------------------------------------------------------------------------------------------------------------------------
 
-ERROR HANDLING:
-
-*If an invalid directory path is entered, the program will prompt you to enter a valid path.
-
-*If an error occurs while processing an image, the program will notify you and continue processing the remaining images.
