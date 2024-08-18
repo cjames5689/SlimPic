@@ -98,19 +98,24 @@ Please check input and ensure the entered directory path exists and is a valid p
 
 def resize_photo(working_path):
     global processed_photo_counter
+    failed_processes = {}
+
     os.chdir(working_path)
     source_files = [
         picture for picture in os.listdir(working_path)
         if os.path.splitext(picture)[1].lower() in [".jpeg", ".jpg"]
     ]
     total_files = len(source_files)
+
     if source_files:
         print("Resizing photos. Please do not close the program until this process has completed.")
         resized_path = os.path.join(working_path, destination_path)
+
         for picture in source_files:
             picture_path = os.path.join(working_path, picture)
             resized_picture_path = os.path.join(resized_path, picture)
             resized_picture_name = os.path.basename(resized_picture_path)
+
             if picture not in os.listdir(resized_path):
                 try:
                     with PIL.Image.open(picture_path) as im:
@@ -119,10 +124,17 @@ def resize_photo(working_path):
                         print(f"{resized_picture_name} has been processed.")
                         processed_photo_counter += 1
                 except PIL.UnidentifiedImageError as e:
-                    print(f"\n*Error: Unknown file type. {picture} was not processed.\n{e}\n")
+                    failed_processes[picture] = e
             else:
                 print(f"{resized_picture_name} already processed.")
         print(f"\n{processed_photo_counter} of {total_files} files processed.\n")
+
+        if failed_processes:
+            print("The following files could not be processed:")
+            for picture, e in failed_processes.items():
+                print(f"File: [{picture}] Error code: [{e}]")
+            print("Please check files and try again.\n")
+
     else:
         print("\nNo files found to be processed.\n")
     processed_photo_counter = 0
