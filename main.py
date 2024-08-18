@@ -24,8 +24,12 @@ Please provide a specific directory path.
         return False
 
     if os.path.isdir(command):
-        if make_folder(command):
-            resize_photo(command)
+        try:
+            process_photos(command)
+        except Exception as e:
+            print(f"""*Error: {e}
+Please check input and ensure the entered directory path exists and is a valid path.
+""")
     elif command == "help":
         display_help()
     elif command == "exit":
@@ -74,32 +78,10 @@ the bounding box resolution, they will be saved in the resized folder, but remai
 """)
 
 
-def make_folder(current_path):
-    resized_path = os.path.join(current_path, destination_path)
-
-    if os.path.exists(resized_path):
-        print("\nThe resized folder already exists. Processed photos will be saved in this directory path.\n")
-        return True
-    else:
-        try:
-            os.makedirs(resized_path)
-            print(f"\n{resized_path} has been created.\n")
-            return True
-        except PermissionError as p:
-            print(f"""*Error: {p}
-Please contact the system administrator for permission to access this folder.
-""")
-        except Exception as e:
-            print(f"""*Error: {e}
-Please check input and ensure the entered directory path exists and is a valid path.
-""")
-            return False
-
-
-def resize_photo(working_path):
+def process_photos(working_path):
     global processed_photo_counter
     failed_processes = {}
-
+    resized_path = os.path.join(working_path, destination_path)
     os.chdir(working_path)
     source_files = [
         picture for picture in os.listdir(working_path)
@@ -107,37 +89,58 @@ def resize_photo(working_path):
     ]
     total_files = len(source_files)
 
-    if source_files:
-        print("Resizing photos. Please do not close the program until this process has completed.")
-        resized_path = os.path.join(working_path, destination_path)
+    if not source_files:
+        print("\nNo files found to process.\n")
+        return
 
-        for picture in source_files:
-            picture_path = os.path.join(working_path, picture)
-            resized_picture_path = os.path.join(resized_path, picture)
-            resized_picture_name = os.path.basename(resized_picture_path)
-
-            if picture not in os.listdir(resized_path):
-                try:
-                    with PIL.Image.open(picture_path) as im:
-                        im.thumbnail(default_dimension)
-                        im.save(resized_picture_path)
-                        print(f"{resized_picture_name} has been processed.")
-                        processed_photo_counter += 1
-                except PIL.UnidentifiedImageError as e:
-                    failed_processes[picture] = e
-            else:
-                print(f"{resized_picture_name} already processed.")
-        print(f"\n{processed_photo_counter} of {total_files} files processed.\n")
-
-        if failed_processes:
-            print("The following files could not be processed:")
-            for picture, e in failed_processes.items():
-                print(f"File: [{picture}] Error code: [{e}]")
-            print("Please check files and try again.\n")
-
+    print("\nResizing photos. Please do not close the program until this process has completed.")
+    if os.path.exists(resized_path):
+        print("Resized directory already exists. Processed photos will be saved in this directory path.\n")
     else:
-        print("\nNo files found to be processed.\n")
+        try:
+            os.makedirs(resized_path, exist_ok=True)
+        except PermissionError as p:
+            print(f"""*Error: {p}
+Please contact the system administrator for permission to access this folder.
+""")
+            return False
+
+    for picture in source_files:
+        resize_and_save_photo(picture, working_path, resized_path, failed_processes)
+
+    print(f"\n{processed_photo_counter} of {total_files} processed.")
+    if failed_processes:
+        log_failed_processes(failed_processes)
     processed_photo_counter = 0
+    return
+
+
+def resize_and_save_photo(picture, working_path, resized_path, failed_processes):
+    global processed_photo_counter
+    picture_path = os.path.join(working_path, picture)
+    resized_picture_path = os.path.join(resized_path, picture)
+    resized_picture_name = os.path.basename(picture)
+    if os.path.exists(resized_picture_path):
+        print(f"{resized_picture_name} already processed.")
+    else:
+        try:
+            with PIL.Image.open(picture_path) as im:
+                im.thumbnail(default_dimension)
+                im.save(resized_picture_path)
+                print(f"{resized_picture_name} has been processed.")
+                processed_photo_counter += 1
+        except PIL.UnidentifiedImageError as e:
+            failed_processes[picture] = e
+    return
+
+
+def log_failed_processes(failed_processes):
+    print("\nThe following files could not be processed:")
+
+    for picture, error in failed_processes.items():
+        print(f"Filename: {picture}; Error: {error}")
+
+    print("Please check these files and try again.\n")
     return
 
 
